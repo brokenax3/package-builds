@@ -1,0 +1,33 @@
+_name=thunar-shares-plugin
+pkgname=$_name
+pkgver=0.3.1
+_gitcommit=9f9d2429217838b3b8375e41ab3675412cf1d0ed
+pkgrel=1
+pkgdesc="Thunar plugin to quickly share a folder using Samba without requiring root access"
+arch=('i686' 'x86_64')
+url="http://goodies.xfce.org/projects/thunar-plugins/${_name}"
+license=('GPL2' 'LGPL')
+depends=('thunar>=1.7.0' 'samba')
+makedepends=('xfce4-dev-tools')
+provides=("${_name}=${pkgver}")
+replaces=("$_name-manjaro")
+conflicts=("${_name}" "$_name-manjaro" "$_name-gtk")
+#source=("http://git.xfce.org/thunar-plugins/${_name}/snapshot/${_name}-${_gitcommit}.tar.bz2")
+source=("https://gitlab.xfce.org/thunar-plugins/thunar-shares-plugin/-/archive/master/${_name}-master.tar.bz2"
+        "shares.patch")
+sha256sums=('bdb4c5e3c4125522d5893caacf17d599e4bf259b947ee46961825f4e2e80810a'
+            '88ffc824dd38bb61d3e0db0a0df44bc1afcae3a2b27557570c0e984917c2d575')
+
+build() {
+  #cd "${srcdir}/${_name}-${_gitcommit}"
+  cd "${srcdir}/${_name}-master"
+  patch -p1 -i "$srcdir"/shares.patch
+  ./autogen.sh --prefix=/usr --enable-debug=no
+  make
+}
+
+package() {
+  #cd "${srcdir}/${_name}-${_gitcommit}"
+  cd "${srcdir}/${_name}-master"
+  make DESTDIR="${pkgdir}" install
+}
